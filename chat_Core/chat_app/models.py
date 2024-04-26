@@ -30,7 +30,7 @@ class ChatRoom(models.Model):
     def __str__(self):
         return self.roomId + '--' + str(self.name)
     
-class Messages(models.Model):
+class ChatMessage(models.Model):
     chatRoomId = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
     message = models.CharField(max_length=300)
     sender = models.ForeignKey(CustomUserModel , on_delete=models.SET_NULL, null=True)
