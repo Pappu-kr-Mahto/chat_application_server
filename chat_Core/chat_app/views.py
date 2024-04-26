@@ -53,3 +53,36 @@ def login(request):
     
     except Exception as e:
         return Response({"error":"Invalid Credentials"},status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET'])
+def getAllChatUsers(request):
+    userObj = CustomUserModel.objects.filter(email = request.user).values()
+    userdata = ChatRoom.objects.filter(members=request.user).values()
+    return Response({'user':userObj , 'data':userdata})
+
+@api_view(['GET'])
+def getAllUsers(request):
+    userData =CustomUserModel.objects.filter(is_staff=False).values('id','first_name','last_name','email')
+    return Response({'data': userData})
+
+
+@api_view(['POST'])
+def createroom(request):
+    userId = request.data
+    userObj = CustomUserModel.objects.get(email = request.user)
+    for id in userId:
+        tempUser = CustomUserModel.objects.get(id=id)
+        obj =ChatRoom.objects.create(name = tempUser.first_name)
+        obj.members.add(userObj)
+        obj.members.add(tempUser)
+        obj.save()
+    return Response({'success':'working'})
+
+@api_view(['GET'])
+def chatmessages(request,roomId):
+    print(roomId)
+    chats = ChatMessage.objects.filter(chatRoomId = 1).order_by("timestamp").values()
+    print(chats)
+    return Response({'data' : chats})
